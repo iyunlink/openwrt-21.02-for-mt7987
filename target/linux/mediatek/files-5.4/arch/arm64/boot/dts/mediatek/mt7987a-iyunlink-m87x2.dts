@@ -1,0 +1,523 @@
+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+/*
+ * Copyright (C) 2025 MediaTek Inc.
+ * Author: Sam.Shih <sam.shih@mediatek.com>
+ */
+
+/dts-v1/;
+#include "mt7987a.dtsi"
+#include <dt-bindings/input/input.h>
+#include <dt-bindings/interrupt-controller/irq.h>
+#include <dt-bindings/interrupt-controller/arm-gic.h>
+#include <dt-bindings/phy/phy.h>
+#include <dt-bindings/reset/ti-syscon.h>
+#include <dt-bindings/clock/mediatek,mt7987-clk.h>
+#include <dt-bindings/pinctrl/mt65xx.h>
+
+/* IYUNLINK M87X2 DTS for DT overlay-based device tree */
+/ {
+	model = "M87X2";
+	compatible = "iyunlink,m87x2";
+
+	chosen {
+		bootargs = "console=ttyS0,115200n1 loglevel=8  \
+			    earlycon=uart8250,mmio32,0x11000000 \
+				pci=pcie_bus_perf \
+				root=/dev/mmcblk0p3 rootfstype=squashfs rootwait rw";
+		rootdisk-emmc = <&emmc_rootfs>;
+	};
+
+	gpio-keys {
+		compatible = "gpio-keys";
+		
+
+		reset {
+			label = "reset";
+			linux,code = <KEY_RESTART>;
+			gpios = <&pio 1 GPIO_ACTIVE_LOW>;
+			debounce-interval = <10>;
+		};
+
+		// wps {
+		// 	label = "wps";
+		// 	linux,code = <KEY_WPS_BUTTON>;
+		// 	gpios = <&pio 0 GPIO_ACTIVE_LOW>;
+		// 	debounce-interval = <10>;
+		// };
+
+		wwan1_sim1_det {
+			label = "wwan1_sim1_det";
+			linux,code = <BTN_0>;
+			gpios = <&aw9523b 4 GPIO_ACTIVE_LOW>;
+			debounce-interval = <10>;
+			poll-interval = <100>; 
+		};
+
+		wwan1_sim2_det {
+			label = "wwan1_sim2_det";
+			linux,code = <BTN_1>;
+			gpios = <&aw9523b 5 GPIO_ACTIVE_LOW>;
+			debounce-interval = <10>;
+			poll-interval = <100>; 
+		};
+
+		wwan2_sim1_det {
+			label = "wwan2_sim1_det";
+			linux,code = <BTN_2>;
+			gpios = <&aw9523b 3 GPIO_ACTIVE_LOW>;
+			debounce-interval = <10>;
+			poll-interval = <100>; 
+		};
+
+		wwan2_sim2_det {
+			label = "wwan2_sim2_det";
+			linux,code = <BTN_3>;
+			gpios = <&aw9523b 2 GPIO_ACTIVE_LOW>;
+			debounce-interval = <10>;
+			poll-interval = <100>; 
+		};
+	};
+
+	gpio-export {
+		compatible = "gpio-export";
+
+		reset_gps {
+			gpio-export,name = "reset_gps";
+			gpio-export,output = <1>;
+			gpios = <&aw9523b 0 GPIO_ACTIVE_HIGH>;
+			debounce-interval = <10>;
+		};
+
+		power_gps {
+			gpio-export,name = "power_gps";
+			gpio-export,output = <1>;
+			gpios = <&aw9523b 1 GPIO_ACTIVE_HIGH>;
+		};
+
+		power_wwan1 {
+			gpio-export,name = "power_wwan1";
+			gpio-export,output = <1>;
+			gpios = <&aw9523b 8 GPIO_ACTIVE_HIGH>;
+		};
+
+		power_wwan2 {
+			gpio-export,name = "power_wwan2";
+			gpio-export,output = <1>;
+			gpios = <&aw9523b 9 GPIO_ACTIVE_HIGH>;
+		};
+
+	};
+
+	gpio-leds {
+		compatible = "gpio-leds";
+		wwan1 {
+			label = "wwan1";
+			gpios = <&aw9523b 12 GPIO_ACTIVE_HIGH>;
+		};
+
+		wwan2 {
+			label = "wwan2";
+			gpios = <&aw9523b 13 GPIO_ACTIVE_HIGH>;
+		};
+
+		gps {
+			label = "gps";
+			gpios = <&aw9523b 14 GPIO_ACTIVE_HIGH>;
+		};
+
+		system {
+			label = "system";
+			gpios = <&pio 11 GPIO_ACTIVE_HIGH>;
+		};
+
+		wifi-2g {
+			label = "wifi-2g";
+			gpios = <&pio 8 GPIO_ACTIVE_LOW>;
+		};
+
+		wifi-5g {
+			label = "wifi-5g";
+			gpios = <&pio 9 GPIO_ACTIVE_LOW>;
+		};
+	};
+
+	watchdog {
+		compatible = "linux,wdt-gpio";
+		gpios = <&pio 10 GPIO_ACTIVE_HIGH>;
+		hw_algo = "toggle";
+		hw_margin_ms = <1300>;
+		always-running;
+	};
+
+	reg_3p3v: regulator-3p3v {
+		compatible = "regulator-fixed";
+		regulator-name = "fixed-3.3V";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		regulator-boot-on;
+		regulator-always-on;
+	};
+
+	// gsw_mt753x: gsw@0 {
+	// 	compatible = "mediatek,mt753x";
+	// 	mediatek,ethsys = <&ethsys>;
+	// 	#address-cells = <1>;
+	// 	#size-cells = <0>;
+
+	// 	mediatek,mdio = <&mdio>;
+	// 	mediatek,portmap = "wllll";
+	// 	mediatek,mdio_master_pinmux = <1>;
+	// 	reset-gpios = <&pio 42 0>;
+	// 	interrupt-parent = <&pio>;
+	// 	interrupts = <41 IRQ_TYPE_LEVEL_HIGH>;
+	// 	status = "okay";
+
+	// 	port5: port@5 {
+	// 		compatible = "mediatek,mt753x-port";
+	// 		reg = <5>;
+	// 		phy-mode = "2500base-x";
+
+	// 		fixed-link {
+	// 			speed = <2500>;
+	// 			full-duplex;
+	// 		};
+	// 	};
+
+	// 	port6: port@6 {
+	// 		compatible = "mediatek,mt753x-port";
+	// 		reg = <6>;
+	// 		phy-mode = "2500base-x";
+
+	// 		fixed-link {
+	// 			speed = <2500>;
+	// 			full-duplex;
+	// 		};
+	// 	};
+	// };
+
+};
+
+
+&pcie0 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&pcie0_pins>;
+	/delete-property/ wifi-reset-gpios;
+	/delete-property/ wifi-reset-msleep;
+};
+
+&pcie1 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&pcie1_pins>;
+};
+
+&watchdog {
+	status = "okay";
+};
+
+
+&tphyu3port0 {
+	status = "okay";
+};
+
+// &ssusb {
+// 	status = "okay";
+// 	mediatek,u3p-dis-msk=<0>;
+// 	phys = <&tphyu2port0 PHY_TYPE_USB2>,
+// 	       <&tphyu3port0 PHY_TYPE_USB3>;
+// };
+&tphyu3port0 {
+	status = "okay";
+};
+
+&xhci {
+	mediatek,u3p-dis-msk=<0>;
+
+	phys = <&tphyu2port0 PHY_TYPE_USB2>,
+	       <&tphyu3port0 PHY_TYPE_USB3>;
+};
+
+&uart0 {
+	status = "okay";
+};
+
+&uart1 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&uart1_pins>;
+};
+
+// &uart2 {
+// 	status = "okay";
+// };
+
+&spi0 {
+	status = "disabled";
+};
+
+&spi1 {
+	status = "disabled";
+};
+
+&spi2 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&spi2_flash_pins>;
+	status = "okay";
+
+	flash@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		compatible = "jedec,spi-nor";
+		spi-cal-enable;
+		spi-cal-mode = "read-data";
+		spi-cal-datalen = <7>;
+		spi-cal-data = /bits/ 8 <
+			0x53 0x46 0x5F 0x42 0x4F 0x4F 0x54>;
+		spi-cal-addrlen = <1>;
+		spi-cal-addr = /bits/ 32 <0x0>;
+		reg = <0>;
+		spi-max-frequency = <52000000>;
+		spi-tx-bus-width = <4>;
+		spi-rx-bus-width = <4>;
+
+		partition@00000 {
+			label = "BL2";
+			reg = <0x00000 0x0040000>;
+		};
+		partition@40000 {
+			label = "u-boot-env";
+			reg = <0x40000 0x0010000>;
+		};
+		factory: partition@50000 {
+			label = "Factory";
+			reg = <0x50000 0x200000>;
+		};
+		partition@250000 {
+			label = "FIP";
+			reg = <0x250000 0x200000>;
+		};
+	};
+};
+
+
+&i2c0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&i2c0_pins>;
+	status = "okay";
+
+	aw9523b: gpio-expander@58 {
+		compatible = "awinic,aw9523b-gpio";
+		reg = <0x58>;
+		pinctrl-names = "default";
+		reset-gpios = <&pio 6 GPIO_ACTIVE_HIGH>;
+		gpio-controller;
+		#gpio-cells = <2>;
+	};
+
+
+	gd30ts112n: temperature-sensor@49 {
+		compatible = "gigadevice,gd30ts112n";
+		reg = <0x49>;
+	};
+};
+
+&mmc0 {
+	pinctrl-names = "default", "state_uhs";
+	pinctrl-0 = <&mmc_pins_default>;
+	pinctrl-1 = <&mmc_pins_uhs>;
+	bus-width = <8>;
+	max-frequency = <48000000>;
+	cap-mmc-highspeed;
+	vmmc-supply = <&reg_3p3v>;
+	non-removable;
+	status = "okay";
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	card@0 {
+		compatible = "mmc-card";
+		reg = <0>;
+
+		block {
+			compatible = "block-device";
+			partitions {
+				emmc_rootfs: block-partition-production {
+					partname = "production";
+				};
+			};
+		};
+	};
+};
+
+
+&netsys {
+	ethwarp: syscon@15031000 {
+		compatible = "mediatek,mt7988-ethwarp", "syscon";
+		reg = <0 0x15031000 0 0x1000>;
+		#clock-cells = <1>;
+	};
+
+	eth: ethernet@15100000 {
+		compatible = "mediatek,mt7987-eth";
+		reg = <0 0x15100000 0 0x80000>,
+		      <0 0x15400000 0 0x20000>;
+		interrupts = <GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>,
+			     <GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>,
+			     <GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>,
+			     <GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>,
+			     <GIC_SPI 196 IRQ_TYPE_LEVEL_HIGH>,
+			     <GIC_SPI 197 IRQ_TYPE_LEVEL_HIGH>,
+			     <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>,
+			     <GIC_SPI 199 IRQ_TYPE_LEVEL_HIGH>;
+		clocks = <&ethsys CK_ETHDMA_FE_EN>,
+			 <&ethsys CK_ETHDMA_GP2_EN>,
+			 <&ethsys CK_ETHDMA_GP1_EN>,
+			 <&ethsys CK_ETHDMA_GP3_EN>,
+			 <&sgmiisys0 CK_SGM0_TX_EN>,
+			 <&sgmiisys0 CK_SGM0_RX_EN>,
+			 <&sgmiisys1 CK_SGM1_TX_EN>,
+			 <&sgmiisys1 CK_SGM1_RX_EN>,
+			 <&topckgen CK_TOP_SGM_0_SEL>,
+			 <&topckgen CK_TOP_SGM_1_SEL>,
+			 <&topckgen CK_TOP_ETH_GMII_SEL>,
+			 <&topckgen CK_TOP_ETH_REFCK_50M_SEL>,
+			 <&topckgen CK_TOP_ETH_SYS_200M_SEL>,
+			 <&topckgen CK_TOP_ETH_SYS_SEL>,
+			 <&topckgen CK_TOP_ETH_XGMII_SEL>,
+			 <&topckgen CK_TOP_ETH_MII_SEL>,
+			 <&topckgen CK_TOP_NETSYS_SEL>,
+			 <&topckgen CK_TOP_NETSYS_500M_SEL>,
+			 <&topckgen CK_TOP_NETSYS_2X_SEL>;
+		clock-names = "fe", "gp2", "gp1", "gp3", "sgmii_tx250m",
+			      "sgmii_rx250m", "sgmii2_tx250m", "sgmii2_rx250m",
+			      "top_sgm0_sel", "top_sgm1_sel", "top_eth_gmii_sel",
+			      "top_eth_refck_50m_sel", "top_eth_sys_200m_sel",
+			      "top_eth_sys_sel", "top_eth_xgmii_sel",
+			      "top_eth_mii_sel", "top_netsys_sel",
+			      "top_netsys_500m_sel", "top_netsys_pao_2x_sel";
+		assigned-clocks = <&topckgen CK_TOP_NETSYS_2X_SEL>,
+				  <&topckgen CK_TOP_SGM_0_SEL>,
+				  <&topckgen CK_TOP_SGM_1_SEL>;
+		assigned-clock-parents = <&apmixedsys CK_APMIXED_NET2PLL>,
+					 <&apmixedsys CK_APMIXED_SGMPLL>,
+					 <&apmixedsys CK_APMIXED_SGMPLL>;
+		mediatek,ethsys = <&ethsys>;
+		mediatek,sgmiisys = <&sgmiisys0>, <&sgmiisys1>;
+		mediatek,infracfg = <&topmisc>;
+		mediatek,toprgu = <&watchdog>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&mdio0_pins>;
+		#reset-cells = <1>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+		status = "okay";
+
+		gmac0: mac@0 {
+			compatible = "mediatek,eth-mac";
+			reg = <0>;
+			phy-mode = "2500base-x";
+
+			fixed-link {
+				speed = <2500>;
+				full-duplex;
+				pause;
+			};
+		};
+
+		gmac1: mac@1 {
+			compatible = "mediatek,eth-mac";
+			reg = <1>;
+			mac-type = "xgdm";
+			phy-mode = "internal";
+			phy-handle = <&phy15>;
+			status = "okay";
+		};
+
+		mdio: mdio-bus {
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			phy15: phy@15 {
+				pinctrl-names = "i2p5gbe-led";
+				pinctrl-0 = <&i2p5gbe_led0_pins>;
+				compatible = "ethernet-phy-ieee802.3-c45";
+				interrupts = <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
+				interrupt-parent = <&gic>;
+				reg = <15>;
+				phy-mode = "internal";
+			};
+
+			switch31: switch@31 {
+				compatible = "mediatek,mt7531";
+				reg = <31>;
+				reset-gpios = <&pio 42 0>;
+				status = "okay";
+
+				ports {
+					#address-cells = <1>;
+					#size-cells = <0>;
+
+					port@0 {
+						reg = <0>;
+						label = "wan";
+					};
+
+					port@1 {
+						reg = <1>;
+						label = "eth3";
+					};
+
+					port@2 {
+						reg = <2>;
+						label = "eth2";
+					};
+
+					port@6 {
+						reg = <6>;
+						label = "cpu";
+						ethernet = <&gmac0>;
+						phy-mode = "2500base-x";
+
+						fixed-link {
+							speed = <2500>;
+							full-duplex;
+							pause;
+						};
+					};
+				};
+			};
+		};
+	};
+
+	hnat: hnat@15000000 {
+		compatible = "mediatek,mtk-hnat_v5";
+		reg = <0 0x15100000 0 0x80000>;
+		interrupts = <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>;
+		resets = <&ethsys 0>;
+		reset-names = "mtketh";
+		status = "disabled";
+	};
+
+	crypto: crypto@15600000 {
+		compatible = "inside-secure,safexcel-eip197b",
+			     "security-ip-197-srv";
+		reg = <0 0x15600000 0 0x180000>;
+		interrupts = <GIC_SPI 214 IRQ_TYPE_LEVEL_HIGH>,
+			     <GIC_SPI 215 IRQ_TYPE_LEVEL_HIGH>,
+			     <GIC_SPI 216 IRQ_TYPE_LEVEL_HIGH>,
+			     <GIC_SPI 217 IRQ_TYPE_LEVEL_HIGH>;
+		interrupt-names = "ring0", "ring1", "ring2", "ring3";
+		eth = <&eth>;
+		status = "okay";
+	};
+};
+
+&hnat {
+	mtketh-wan = "eth1";
+	mtketh-lan = "lan";
+	mtketh-lan2 = "eth2";
+	mtketh-max-gmac = <3>;
+	mtketh-ppe-num = <1>;
+	status = "disabled";
+};
