@@ -24,23 +24,23 @@ endif
 CFLAGS += -Wall -Wextra -Werror -O1 #-s
 LDFLAGS += -lpthread -ldl -lrt
 
-release: clean qmi-proxy mbim-proxy atc-proxy #qrtr-proxy
-	$(CC) ${CFLAGS} ${QL_CM_SRC} ${QL_CM_DHCP} -o out/quectel-CM ${LDFLAGS}
+release: clean #qmi-proxy mbim-proxy atc-proxy qrtr-proxy
+	$(CC) ${CFLAGS} ${QL_CM_SRC} ${QL_CM_DHCP} -o quectel-CM ${LDFLAGS}
 
-debug: clean
-	$(CC) ${CFLAGS} -g -DCM_DEBUG ${QL_CM_SRC} ${QL_CM_DHCP} -o out/quectel-CM -lpthread -ldl -lrt
+# debug: clean
+# 	$(CC) ${CFLAGS} -g -DCM_DEBUG ${QL_CM_SRC} ${QL_CM_DHCP} -o out/quectel-CM -lpthread -ldl -lrt
 
-qmi-proxy:
-	$(CC) ${CFLAGS} quectel-qmi-proxy.c -o out/quectel-qmi-proxy ${LDFLAGS} 
+# qmi-proxy:
+# 	$(CC) ${CFLAGS} quectel-qmi-proxy.c -o out/quectel-qmi-proxy ${LDFLAGS} 
 
-mbim-proxy:
-	$(CC) ${CFLAGS} quectel-mbim-proxy.c -o out/quectel-mbim-proxy ${LDFLAGS} 
+# mbim-proxy:
+# 	$(CC) ${CFLAGS} quectel-mbim-proxy.c -o out/quectel-mbim-proxy ${LDFLAGS} 
 
-qrtr-proxy:
-	$(CC) ${CFLAGS} quectel-qrtr-proxy.c -o out/quectel-qrtr-proxy ${LDFLAGS} 
+# qrtr-proxy:
+# 	$(CC) ${CFLAGS} quectel-qrtr-proxy.c -o out/quectel-qrtr-proxy ${LDFLAGS} 
 
-atc-proxy:
-	$(CC) ${CFLAGS} quectel-atc-proxy.c atchannel.c at_tok.c util.c -o out/quectel-atc-proxy ${LDFLAGS} 
+# atc-proxy:
+# 	$(CC) ${CFLAGS} quectel-atc-proxy.c atchannel.c at_tok.c util.c -o out/quectel-atc-proxy ${LDFLAGS} 
 
 clean:
 	cd out/; rm -rf *.o libmnl/*.o quectel-CM quectel-qmi-proxy quectel-mbim-proxy quectel-atc-proxy
