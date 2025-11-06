@@ -58,7 +58,7 @@ echo "=========================================="
 echo "Build OpenWrt"
 echo "=========================================="
 
-[ ! -f .config ] && cp defaults.conf .config
+[ ! -f .config ] && cp defaults.config .config
 make defconfig
 make V=s -j1
 [ $? -ne 0 ] && {
