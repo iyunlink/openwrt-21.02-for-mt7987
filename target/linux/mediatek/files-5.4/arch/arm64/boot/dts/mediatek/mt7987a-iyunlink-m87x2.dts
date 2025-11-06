@@ -38,13 +38,6 @@
 			debounce-interval = <10>;
 		};
 
-		// wps {
-		// 	label = "wps";
-		// 	linux,code = <KEY_WPS_BUTTON>;
-		// 	gpios = <&pio 0 GPIO_ACTIVE_LOW>;
-		// 	debounce-interval = <10>;
-		// };
-
 		wwan1_sim1_det {
 			label = "wwan1_sim1_det";
 			linux,code = <BTN_0>;
@@ -157,44 +150,6 @@
 		regulator-boot-on;
 		regulator-always-on;
 	};
-
-	// gsw_mt753x: gsw@0 {
-	// 	compatible = "mediatek,mt753x";
-	// 	mediatek,ethsys = <&ethsys>;
-	// 	#address-cells = <1>;
-	// 	#size-cells = <0>;
-
-	// 	mediatek,mdio = <&mdio>;
-	// 	mediatek,portmap = "wllll";
-	// 	mediatek,mdio_master_pinmux = <1>;
-	// 	reset-gpios = <&pio 42 0>;
-	// 	interrupt-parent = <&pio>;
-	// 	interrupts = <41 IRQ_TYPE_LEVEL_HIGH>;
-	// 	status = "okay";
-
-	// 	port5: port@5 {
-	// 		compatible = "mediatek,mt753x-port";
-	// 		reg = <5>;
-	// 		phy-mode = "2500base-x";
-
-	// 		fixed-link {
-	// 			speed = <2500>;
-	// 			full-duplex;
-	// 		};
-	// 	};
-
-	// 	port6: port@6 {
-	// 		compatible = "mediatek,mt753x-port";
-	// 		reg = <6>;
-	// 		phy-mode = "2500base-x";
-
-	// 		fixed-link {
-	// 			speed = <2500>;
-	// 			full-duplex;
-	// 		};
-	// 	};
-	// };
-
 };
 
 
@@ -311,6 +266,12 @@
 		reg = <0x58>;
 		pinctrl-names = "default";
 		reset-gpios = <&pio 6 GPIO_ACTIVE_HIGH>;
+		
+		interrupt-parent = <&pio>;
+		interrupts = <&pio 5 GPIO_ACTIVE_LOW>;
+		interrupt-controller;
+		#interrupt-cells = <2>;
+		
 		gpio-controller;
 		#gpio-cells = <2>;
 	};
@@ -496,7 +457,7 @@
 		interrupts = <GIC_SPI 198 IRQ_TYPE_LEVEL_HIGH>;
 		resets = <&ethsys 0>;
 		reset-names = "mtketh";
-		status = "disabled";
+		status = "okay";
 	};
 
 	crypto: crypto@15600000 {
@@ -514,10 +475,11 @@
 };
 
 &hnat {
-	mtketh-wan = "eth1";
-	mtketh-lan = "lan";
+	mtketh-wan = "wan";
+	mtketh-lan = "eth1";
 	mtketh-lan2 = "eth2";
-	mtketh-max-gmac = <3>;
+	mtketh-lan3 = "eth3";
+	mtketh-max-gmac = <4>;
 	mtketh-ppe-num = <1>;
-	status = "disabled";
+	status = "okay";
 };

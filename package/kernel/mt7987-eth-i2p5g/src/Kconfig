@@ -1,0 +1,2 @@
+config MT7987_ETH_I2P5G
+	tristate "MediaTek MT7987 2.5G PHY driver"

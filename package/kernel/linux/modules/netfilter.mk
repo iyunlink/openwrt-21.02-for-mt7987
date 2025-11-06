@@ -242,17 +242,6 @@ endef
 $(eval $(call KernelPackage,ipt-filter))
 
 
-define KernelPackage/ipt-offload
-  TITLE:=Netfilter routing/NAT offload support
-  KCONFIG:=$(KCONFIG_IPT_FLOW)
-  FILES:=$(foreach mod,$(IPT_FLOW-m),$(LINUX_DIR)/net/$(mod).ko)
-  AUTOLOAD:=$(call AutoProbe,$(notdir $(IPT_FLOW-m)))
-  $(call AddDepends/ipt,+kmod-nf-flow)
-endef
-
-$(eval $(call KernelPackage,ipt-offload))
-
-
 define KernelPackage/ipt-ipopt
   TITLE:=Modules for matching/changing IP packet options
   KCONFIG:=$(KCONFIG_IPT_IPOPT)
