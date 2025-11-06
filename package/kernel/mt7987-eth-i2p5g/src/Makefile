@@ -1,0 +1,1 @@
+obj-${CONFIG_MT7987_ETH_I2P5G}	+= mt7987-eth-i2p5g.o
