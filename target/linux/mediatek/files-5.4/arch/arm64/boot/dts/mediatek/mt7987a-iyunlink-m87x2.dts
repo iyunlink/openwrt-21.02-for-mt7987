@@ -421,7 +421,7 @@
 
 					port@0 {
 						reg = <0>;
-						label = "wan";
+						label = "eth4";
 					};
 
 					port@1 {
@@ -475,7 +475,7 @@
 };
 
 &hnat {
-	mtketh-wan = "wan";
+	mtketh-wan = "eth4";
 	mtketh-lan = "eth1";
 	mtketh-lan2 = "eth2";
 	mtketh-lan3 = "eth3";

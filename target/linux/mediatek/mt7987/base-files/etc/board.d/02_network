@@ -24,7 +24,7 @@ mediatek_setup_interfaces()
 		ucidef_set_interfaces_lan_wan "lan1 lan2 lan3 eth1 eth2" wan
 		;;
 	iyunlink,m87x2)
-		ucidef_set_interfaces_lan_wan "eth1 eth2 eth3" wan
+		ucidef_set_interfaces_lan_wan "eth1 eth2 eth3" eth4
 		;;
 	*)
 		ucidef_set_interfaces_lan_wan "lan0 lan1 lan2 lan3 eth2" eth1

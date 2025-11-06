@@ -1,0 +1,33 @@
+Index: linux-5.4.281/net/ipv4/tcp_input.c
+===================================================================
+--- linux-5.4.281.orig/net/ipv4/tcp_input.c
++++ linux-5.4.281/net/ipv4/tcp_input.c
+@@ -235,7 +235,7 @@ static void tcp_incr_quickack(struct soc
+ 		icsk->icsk_ack.quick = quickacks;
+ }
+ 
+-static void tcp_enter_quickack_mode(struct sock *sk, unsigned int max_quickacks)
++void tcp_enter_quickack_mode(struct sock *sk, unsigned int max_quickacks)
+ {
+ 	struct inet_connection_sock *icsk = inet_csk(sk);
+ 
+@@ -244,6 +244,7 @@ static void tcp_enter_quickack_mode(stru
+ 	icsk->icsk_ack.ato = TCP_ATO_MIN;
+ }
+ 
++EXPORT_SYMBOL(tcp_enter_quickack_mode);
+ /* Send ACKs quickly, if "quick" count is not exhausted
+  * and the session is not interactive.
+  */
+Index: linux-5.4.281/include/net/tcp.h
+===================================================================
+--- linux-5.4.281.orig/include/net/tcp.h
++++ linux-5.4.281/include/net/tcp.h
+@@ -346,6 +346,7 @@ ssize_t tcp_splice_read(struct socket *s
+ 			struct pipe_inode_info *pipe, size_t len,
+ 			unsigned int flags);
+ 
++void tcp_enter_quickack_mode(struct sock *sk, unsigned int max_quickacks);
+ static inline void tcp_dec_quickack_mode(struct sock *sk)
+ {
+ 	struct inet_connection_sock *icsk = inet_csk(sk);
