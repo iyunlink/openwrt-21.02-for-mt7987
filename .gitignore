@@ -46,7 +46,7 @@ git-src
 !/dl/mapd*
 !/dl/mapfilter*
 !/dl/mt76*
-!/dl/mt7992_20250227*
+# !/dl/mt7992_20250227*
 !/dl/mtfwd*
 !/dl/mtk*
 !/dl/mtqos*
