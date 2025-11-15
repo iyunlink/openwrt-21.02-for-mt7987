@@ -54,13 +54,19 @@ echo ""
 echo "Patches applied successfully!"
 echo ""
 
+echo ""
+echo "download wifi driver"
+echo ""
+
+wget https://github.com/iyunlink/openwrt-21.02-for-mt7987/releases/download/dev/mt7992_20250227-773981.tar.xz -O dl/mt7992_20250227-773981.tar.xz
+
 echo "=========================================="
 echo "Build OpenWrt"
 echo "=========================================="
 
 [ ! -f .config ] && cp defaults.config .config
 make defconfig
-make V=s -j1
+make V=s -j16
 [ $? -ne 0 ] && {
     echo "make failed"
     exit 1
