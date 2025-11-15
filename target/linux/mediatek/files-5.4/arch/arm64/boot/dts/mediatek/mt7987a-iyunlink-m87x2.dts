@@ -132,6 +132,16 @@
 			label = "wifi-5g";
 			gpios = <&pio 9 GPIO_ACTIVE_LOW>;
 		};
+
+		wan-green {
+			label = "wan-green";
+			gpios = <&pio 12 GPIO_ACTIVE_HIGH>;
+		};
+
+		wan-yellow {
+			label = "wan-yellow";
+			gpios = <&pio 7 GPIO_ACTIVE_HIGH>;
+		};
 	};
 
 	watchdog {
